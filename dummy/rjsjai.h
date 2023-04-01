@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <cstdlib>
 
 struct RJSJAI_ {
     std::string token;
@@ -22,6 +23,9 @@ extern "C" inline RJSJAI* ai_create(const char* token) {
 }
 
 extern "C" inline int ai_send(RJSJAI* ai, int type, const char* prompt) {
+    if (std::getenv("DUMMY_RJSJAI_EXPECT_ERROR")) {
+        ai->status = AI_ERROR_HTTP_UNKNOWN;
+    }
     std::ostringstream oss;
     oss << "{\"type\":" << type << ",\"status\":" << ai->status
         << ",\"prompt\":" << std::quoted(prompt) << "}";

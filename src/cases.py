@@ -1,11 +1,14 @@
 from dataclasses import dataclass, KW_ONLY
-from enum import Enum
+from enum import IntEnum
 from typing import Union, List
+import random
 
-class AiType(Enum):
+
+class AiType(IntEnum):
     CHAT = 2
     DRAW = 3
     WOLFRAM = 4
+
 
 def type_switch_name(type: AiType) -> str:
     return {
@@ -14,8 +17,10 @@ def type_switch_name(type: AiType) -> str:
         AiType.WOLFRAM: "--math"
     }[type]
 
+
 def type_enable_term_output(type: AiType) -> bool:
     return type == AiType.CHAT
+
 
 @dataclass
 class Case:
@@ -26,10 +31,31 @@ class Case:
     _: KW_ONLY
     error: bool = False
 
+    def generate_args(self) -> List[str]:
+        args = [type_switch_name(self.type), self.prompt]
+        if self.output is not None:
+            output_args = [
+                "-o" if self.short_output_switch else "--output",
+                self.output
+            ]
+            if random.random() < 0.5:
+                args = output_args + args
+            else:
+                args += output_args
+        return args
+
+    def should_error(self) -> bool:
+        if self.error:
+            return True
+        if not type_enable_term_output(self.type) and self.output is None:
+            return True
+        return False
+
 
 @dataclass
 class MalformedCase:
     args: List[str]
+
 
 def get_cases() -> List[Union[Case, MalformedCase]]:
     return [

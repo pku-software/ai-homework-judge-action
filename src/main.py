@@ -1,7 +1,8 @@
 import argparse
 from log import ILogger, TermLogger, JsonLogger
-from judge import prepare, build, test 
+from judge import prepare, build, test
 from cases import get_cases
+
 
 def judge(path: str, logger: ILogger):
     if logger.exec_func(prepare, path):
@@ -10,16 +11,20 @@ def judge(path: str, logger: ILogger):
                 logger.exec_func(lambda p: test(p, case), path)
     logger.end()
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='RJSJ AI Homework Judge Program')
+    parser = argparse.ArgumentParser(
+        description='RJSJ AI Homework Judge Program')
     parser.add_argument('workspaces', nargs='*', help='workspace path')
-    parser.add_argument('--batch', dest='batch_file', help='a file containing a list of workspace paths')
-    parser.add_argument('--json', dest='json_file', help='a file to save the judge result')
+    parser.add_argument('--batch', dest='batch_file',
+                        help='a file containing a list of workspace paths')
+    parser.add_argument('--output', dest='output_file',
+                        help='a file to save the judge result')
 
     args = parser.parse_args()
 
-    if args.json_file:
-        logger = JsonLogger(args.json_file)
+    if args.output_file:
+        logger = JsonLogger(args.output_file)
     else:
         logger = TermLogger()
 

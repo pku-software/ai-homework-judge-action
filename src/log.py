@@ -1,6 +1,9 @@
 from typing import Callable, List
 import abc
 from judge import JudgeResult
+import json
+import os
+
 
 class ILogger(metaclass=abc.ABCMeta):
     @abc.abstractmethod
@@ -11,6 +14,7 @@ class ILogger(metaclass=abc.ABCMeta):
     def end(self) -> None:
         pass
 
+
 def wrap_exception(func: Callable[[str], JudgeResult]):
     def wrapped(path: str):
         try:
@@ -19,9 +23,10 @@ def wrap_exception(func: Callable[[str], JudgeResult]):
             return JudgeResult(func.__name__, False, str(e))
     return wrapped
 
+
 class TermLogger(ILogger):
     def __init__(self) -> None:
-        pass
+        self.has_failed = False
 
     def exec_func(self, func: Callable[[str], JudgeResult], ws_path: str) -> bool:
         result = wrap_exception(func)(ws_path)
@@ -30,15 +35,17 @@ class TermLogger(ILogger):
         else:
             print(result.title, "\033[1;31m", "Failed", "\033[0m")
             print(result.log)
+            self.has_failed = True
         return result.success
 
     def end(self) -> None:
-        
-        pass
+        if self.has_failed:
+            exit(1)
+
 
 class JsonLogger(ILogger):
     def __init__(self, json_path: str) -> None:
-        self.json_path = json_path
+        self.json_path = os.path.abspath(json_path)
         self.results: List[JudgeResult] = []
         pass
 
@@ -48,4 +55,6 @@ class JsonLogger(ILogger):
         return result.success
 
     def end(self) -> None:
-        pass
+        with open(self.json_path, "w") as f:
+            f.write(json.dumps(
+                [result.__dict__ for result in self.results]) + "\n")
