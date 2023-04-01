@@ -52,7 +52,7 @@ def build(path: str) -> JudgeResult:
 
     config_commands = [
         "xmake f -y" + (" -pmingw" if os.name == "nt" else ""),
-        "cmake -B ./build"
+        "cmake -B ./build" + (" -G \"MinGW Makefiles\"" if os.name == "nt" else "")
     ]
     cfg_r = subprocess.run(
         config_commands[build_system], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
