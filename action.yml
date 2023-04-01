@@ -11,5 +11,5 @@ runs:
     - uses: actions/setup-python@v4
       with:
         python-version: "3.10"
-    - run: python ${{ github.action_path }}/src/judge.py ${{ github.workspace }}
+    - run: python ${{ github.action_path }}/src/judge.py ${{ github.workspace }} >> $GITHUB_OUTPUT
       shell: bash
