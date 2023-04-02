@@ -107,6 +107,8 @@ def test(path: str, case: Union[Case, MalformedCase]) -> JudgeResult:
     if case.should_error():
         if code == 0:
             return JudgeResult("test", False, "Case should error but passed. Output:\n" + log)
+        elif case.output is not None and os.path.exists(case.output):
+            return JudgeResult("test", False, "Case should error, but output file created. Output:\n" + log)
         else:
             return JudgeResult("test", True, "Failed as expected. Output:\n" + log)
     if case.output is not None:
