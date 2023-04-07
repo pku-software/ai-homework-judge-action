@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 #include <cstdlib>
+#include <cstring>
 
 struct RJSJAI_ {
     std::string token;
