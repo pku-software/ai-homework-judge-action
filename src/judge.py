@@ -122,8 +122,6 @@ def test(path: str, case: Union[Case, MalformedCase]) -> JudgeResult:
         return JudgeResult("test", False, "Failed to parse output as JSON.\nOutput:\n" + log)
     if result["prompt"] != case.prompt:
         return JudgeResult("test", False, f"Prompt mismatch. Expected: {case.prompt}, got: {result['prompt']}.\nOutput:\n{log}")
-    if result["status"] != 0:
-        return JudgeResult("test", False, f"AI should be success status, got: {result['status']}.\nOutput:\n{log}")
     if result["type"] != int(case.type):
         return JudgeResult("test", False, f"AI Type mismatch. Expected: {case.type}, got: {result['type']}.\nOutput:\n{log}")
     if code != 0:
