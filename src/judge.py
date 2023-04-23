@@ -126,4 +126,6 @@ def test(path: str, case: Union[Case, MalformedCase]) -> JudgeResult:
         return JudgeResult("test", False, f"AI should be success status, got: {result['status']}.\nOutput:\n{log}")
     if result["type"] != int(case.type):
         return JudgeResult("test", False, f"AI Type mismatch. Expected: {case.type}, got: {result['type']}.\nOutput:\n{log}")
+    if code != 0:
+        return JudgeResult("test", False, f"Program unexpectedly exited with code {code}.\nOutput:\n{log}")
     return JudgeResult("test", True, log)
