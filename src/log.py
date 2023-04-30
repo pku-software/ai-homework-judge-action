@@ -55,6 +55,6 @@ class JsonLogger(ILogger):
         return result.success
 
     def end(self) -> None:
-        with open(self.json_path, "w") as f:
+        with open(self.json_path, "a") as f:
             f.write(json.dumps(
                 [result.__dict__ for result in self.results]) + "\n")

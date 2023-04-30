@@ -1,6 +1,6 @@
 import argparse
 from log import ILogger, TermLogger, JsonLogger
-from judge import prepare, build, test
+from judge import prepare, build, test as test_by_case
 from cases import get_cases
 
 
@@ -8,7 +8,9 @@ def judge(path: str, logger: ILogger):
     if logger.exec_func(prepare, path):
         if logger.exec_func(build, path):
             for case in get_cases():
-                logger.exec_func(lambda p: test(p, case), path)
+                def test(p: str):
+                    return test_by_case(p, case)
+                logger.exec_func(test, path)
     logger.end()
 
 
