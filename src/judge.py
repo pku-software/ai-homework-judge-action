@@ -17,21 +17,24 @@ class JudgeResult:
 
 def prepare(path: str) -> JudgeResult:
     dirname = os.path.dirname(os.path.abspath(__file__))
-    remotes = [
-        ("https://github.com/pku-software/libai/raw/main/includes/rjsjai.h",
-         "includes/real_rjsjai.h"),
-        ("https://github.com/pku-software/ai_homework_template/raw/main/src/ai.h", "src/ai.h"),
-        ("https://github.com/pku-software/ai_homework_template/raw/main/src/main.cpp", "src/main.cpp")
-    ]
-    for url, target in remotes:
-        full_path = os.path.join(path, target)
-        if not os.path.exists(full_path):
-            os.makedirs(os.path.dirname(full_path), exist_ok=True)
-            urllib.request.urlretrieve(url, full_path)
+    # Should syncing with template repo, but for better speed use local copies.
+    # remotes = [
+    #     ("https://github.com/pku-software/libai/raw/main/includes/rjsjai.h",
+    #      "includes/real_rjsjai.h"),
+    #     ("https://github.com/pku-software/ai_homework_template/raw/main/src/ai.h", "src/ai.h"),
+    #     ("https://github.com/pku-software/ai_homework_template/raw/main/src/main.cpp", "src/main.cpp")
+    # ]
+    # for url, target in remotes:
+    #     full_path = os.path.join(path, target)
+    #     os.makedirs(os.path.dirname(full_path), exist_ok=True)
+    #     urllib.request.urlretrieve(url, full_path)
 
     copies = [
+        ("real_rjsjai.h", "includes"),
         ("rjsjai.h", "includes"),
         ("librjsjai.a", "lib"),
+        ("ai.h", "src"),
+        ("main.cpp", "src"),
     ]
     for file, dir in copies:
         full_path = os.path.join(path, dir)
