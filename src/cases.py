@@ -93,7 +93,7 @@ def get_cases() -> List[Union[Case, MalformedCase]]:
         MalformedCase(["stray"]),
         MalformedCase(["more", "stray"]),
         MalformedCase(["--unrecognized"]),
-        MalformedCase(["--unrecognized", "argument"]),
+        MalformedCase(["--dramatic", "unrecognized"]),
         MalformedCase(["--output"]),
         MalformedCase(["--chat"]),
         MalformedCase(["--chat", "--chat"]),
