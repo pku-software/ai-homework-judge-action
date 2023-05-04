@@ -1,5 +1,5 @@
 from typing import Union, List, Tuple
-from cases import Case, MalformedCase
+from cases import Case, MalformedCase, type_enable_term_output
 from dataclasses import dataclass
 import os
 import shutil
@@ -114,12 +114,21 @@ def test(path: str, case: Union[Case, MalformedCase]) -> JudgeResult:
     if case.output is not None:
         if not os.path.exists(case.output):
             return JudgeResult("test", False, "Output file does not exist.\nOutput:\n" + log)
-        with open(case.output, "r", encoding="utf-8") as f:
-            output = f.read()
+        if type_enable_term_output(case.type):
+            with open(case.output, "r", encoding="utf-8") as f:
+                output = f.read()
+        else:
+            with open(case.output, "rb") as f:
+                buf = f.read()
+                if len(buf) < 8:
+                    return JudgeResult("test", False, "Output file too short.\nOutput:\n" + log)
+                if buf[:8] != b"\xa1\x7e\x27\x07\x00\x0d\x0a\x67":
+                    return JudgeResult("test", False, "Output file header mismatch. Perhaps you are not handling binary files correctly.\nOutput:\n" + log)
+                output = buf[8:].decode("utf-8")
     try:
         result = json.loads(output)
     except Exception:
-        return JudgeResult("test", False, "Failed to parse output as JSON.\nOutput:\n" + log)
+        return JudgeResult("test", False, f"Failed to parse output as JSON:\n{output}\nOutput:\n{log}")
     if result["prompt"] != case.prompt:
         return JudgeResult("test", False, f"Prompt mismatch. Expected: {case.prompt}, got: {result['prompt']}.\nOutput:\n{log}")
     if result["type"] != int(case.type):
